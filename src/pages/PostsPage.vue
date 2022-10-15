@@ -13,19 +13,18 @@
       <post-form :title="'Add post'" @addPost="addPostHandler"/>
     </app-modal>
 
-    <PostList :posts="posts" @deletePost="deletePost"/>
+    <div v-if="isPostsLoading">Loading...</div>
+    <PostList v-else :posts="posts" @deletePost="deletePost"/>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import PostList from '@/features/post/PostList';
 import PostForm from '@/features/post/PostForm';
+import {delay} from '@/helpers';
 
-const INITIAL_POSTS = [
-  {id: 1, title: 'Lama 1', content: 'Lama text text text text text text text text',},
-  {id: 2, title: 'Lama 2', content: 'Lama text lama text text text text text lama text text',},
-  {id: 3, title: 'Lama 3', content: 'Lama text lama text text text text text text lama',},
-];
+const POSTS_API_URL = 'https://jsonplaceholder.typicode.com/posts?_limit=3';
 
 export default {
   components: {
@@ -34,9 +33,13 @@ export default {
   },
   data() {
     return {
-      posts: INITIAL_POSTS,
+      posts: [],
+      isPostsLoading: false,
       isAddPostModalVisible: false,
     };
+  },
+  mounted() {
+    this.fetchPosts();
   },
   methods: {
     setIsAddPostModalVisible(isAddPostModalVisible) {
@@ -51,6 +54,23 @@ export default {
     },
     deletePost(post) {
       this.posts = this.posts.filter(p => p !== post);
+    },
+    async fetchPosts() {
+      this.isPostsLoading = true;
+      try {
+        await delay();
+        const response = await axios.get(POSTS_API_URL);
+        this.posts = this.adaptAPIPosts(response.data);
+      } catch {
+      } finally {
+        this.isPostsLoading = false;
+      }
+    },
+    adaptAPIPosts(APIPosts) {
+      return APIPosts.map(post => {
+        const { id, title, body } = post;
+        return { id, title, content: body, };
+      });
     },
   },
 };
