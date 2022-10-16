@@ -2,6 +2,14 @@
   <div class="wrapper">
     <h1 class="title">Posts</h1>
 
+    <div class="filters">
+      <div>Filters</div>
+      <app-select
+          :options="sortOptions"
+          v-model:modelValue="sortType"
+      ></app-select>
+    </div>
+
     <app-button
         @click="setIsAddPostModalVisible(true)"
         class="add-post-button"
@@ -14,7 +22,7 @@
     </app-modal>
 
     <div v-if="isPostsLoading">Loading...</div>
-    <PostList v-else :posts="posts" @deletePost="deletePost"/>
+    <PostList v-else :posts="sortedPosts" @deletePost="deletePost"/>
   </div>
 </template>
 
@@ -26,16 +34,35 @@ import {delay} from '@/helpers';
 
 const POSTS_API_URL = 'https://jsonplaceholder.typicode.com/posts?_limit=3';
 
+const SORT_TYPES = {
+  NONE: '',
+  BY_TITLE: 'title',
+  BY_CONTENT: 'content',
+};
+const DEFAULT_SORT_TYPE = SORT_TYPES.NONE;
+const SORT_OPTIONS = [
+  {value: SORT_TYPES.NONE, label: 'None',},
+  {value: SORT_TYPES.BY_TITLE, label: 'By title',},
+  {value: SORT_TYPES.BY_CONTENT, label: 'By content',},
+];
+
 export default {
   components: {
     PostList,
     PostForm,
+  },
+  computed: {
+    sortedPosts() {
+      return this.sortPosts(this.posts, this.sortType);
+    },
   },
   data() {
     return {
       posts: [],
       isPostsLoading: false,
       isAddPostModalVisible: false,
+      sortOptions: SORT_OPTIONS,
+      sortType: DEFAULT_SORT_TYPE,
     };
   },
   mounted() {
@@ -68,11 +95,22 @@ export default {
     },
     adaptAPIPosts(APIPosts) {
       return APIPosts.map(post => {
-        const { id, title, body } = post;
-        return { id, title, content: body, };
+        const {id, title, body} = post;
+        return {id, title, content: body,};
       });
     },
+    sortPosts(posts, sortType) {
+      if (sortType === SORT_TYPES.NONE) {
+        return posts;
+      }
+      return [...posts].sort((post1, post2) => post1[sortType].localeCompare(post2[sortType]));
+    },
   },
+  // watch: {
+  //   sortType() {
+  //     this.posts = this.sortPosts(this.posts, this.sortType);
+  //   },
+  // },
 };
 </script>
 
@@ -84,6 +122,15 @@ export default {
 .title {
   margin: 15px 0;
   text-align: center;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+}
+
+.filters * {
+  margin-right: 15px;
 }
 
 .add-post-button {

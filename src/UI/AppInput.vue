@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     onInput(event) {
-      const value = event.target.value;
+      const { target: { value }} = event;
       this.$emit('update:modelValue', value);
     },
   },
