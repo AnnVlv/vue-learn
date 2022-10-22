@@ -1,47 +1,45 @@
 <template>
-  <div class="wrapper">
-    <h1 class="title">Posts</h1>
+  <h1 class="title">Posts</h1>
 
-    <div class="filters">
-      <app-input
-          v-model="searchQuery"
-          placeholder="Search"
-      />
-      <app-select
-          :options="sortOptions"
-          v-model:modelValue="sortType"
-      />
-      <app-select
-          :options="limitOptions"
-          v-model:modelValue="limit"
-      />
-    </div>
+  <div class="filters">
+    <app-input
+        v-model="searchQuery"
+        placeholder="Search"
+    />
+    <app-select
+        :options="sortOptions"
+        v-model:modelValue="sortType"
+    />
+    <app-select
+        :options="limitOptions"
+        v-model:modelValue="limit"
+    />
+  </div>
 
-    <app-button
-        @click="setIsAddPostModalOpened(true)"
-        class="add-post-button"
-    >
-      Add post
-    </app-button>
-    <app-modal v-model:isOpened="isAddPostModalOpened">
-      <post-form
-          :actionName="'Add'"
-          @onSubmit="addPostHandler"
-      />
-    </app-modal>
+  <app-button
+      @click="setIsAddPostModalOpened(true)"
+      class="add-post-button"
+  >
+    Add post
+  </app-button>
+  <app-modal v-model:isOpened="isAddPostModalOpened">
+    <post-form
+        :actionName="'Add'"
+        @onSubmit="addPostHandler"
+    />
+  </app-modal>
 
-    <div v-if="isPostsLoading">Loading...</div>
-    <div v-else>
-      <post-list
-          :posts="sortedAndSearchedPosts"
-          @deletePost="deletePost"
+  <div v-if="isPostsLoading">Loading...</div>
+  <div v-else>
+    <post-list
+        :posts="sortedAndSearchedPosts"
+        @deletePost="deletePost"
+    />
+    <div class="pagination">
+      <app-pagination
+          :pageCount="pageCount"
+          v-model="page"
       />
-      <div class="pagination">
-        <app-pagination
-            :pageCount="pageCount"
-            v-model="page"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -124,8 +122,8 @@ export default {
     async fetchPosts(params = this.getPostsParams()) {
       this.isPostsLoading = true;
       try {
-        await delay();
-        const response = await axios.get(POSTS_API_URL, { params });
+        await delay(500);
+        const response = await axios.get(POSTS_API_URL, {params});
         this.posts = this.adaptAPIPosts(response.data);
         const postCount = response.headers['x-total-count'];
         this.pageCount = getPageCount(postCount, this.limit);
@@ -183,10 +181,6 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
-  padding: 0 15px;
-}
-
 .title {
   margin: 15px 0;
   text-align: center;

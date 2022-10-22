@@ -3,6 +3,7 @@ import AppInput from '@/UI/AppInput';
 import AppModal from '@/UI/AppModal';
 import AppSelect from '@/UI/AppSelect';
 import AppPagination from '@/UI/AppPagination';
+import AppNavbar from '@/UI/AppNavbar';
 
 export default [
     AppButton,
@@ -10,4 +11,5 @@ export default [
     AppModal,
     AppSelect,
     AppPagination,
+    AppNavbar,
 ];

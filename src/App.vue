@@ -1,13 +1,21 @@
 <template>
-  <post-page/>
+  <app-navbar :items="navItems"/>
+  <div class="page-wrapper">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import PostPage from '@/pages/PostsPage';
+import {ROUTES} from '@/router';
 
 export default {
-  components: {
-    PostPage,
+  data() {
+    return {
+      navItems: [
+        { title: 'Home', path: ROUTES.HOME, },
+        { title: 'Posts', path: ROUTES.POSTS, },
+      ],
+    };
   },
 };
 </script>
@@ -17,5 +25,9 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+.page-wrapper {
+  padding: 0 15px;
 }
 </style>

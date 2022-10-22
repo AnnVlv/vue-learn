@@ -4,12 +4,15 @@
     <div class="post__body">{{ post.content }}</div>
 
     <div class="post__actions">
+      <app-button @click="openPost">Open</app-button>
       <app-button @click="deletePost">Delete</app-button>
     </div>
   </div>
 </template>
 
 <script>
+import {ROUTES} from '@/router';
+
 export default {
   props: {
     post: {
@@ -18,6 +21,9 @@ export default {
     },
   },
   methods: {
+    openPost() {
+      this.$router.push(`${ROUTES.POSTS}/${this.post.id}`);
+    },
     deletePost() {
       this.$emit('deletePost');
     },
@@ -42,5 +48,13 @@ export default {
 
 .post__actions {
   text-align: right;
+}
+
+.post__actions * {
+  margin-right: 10px;
+}
+
+.post__actions *:last-of-type {
+  margin-right: 0;
 }
 </style>
