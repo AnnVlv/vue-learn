@@ -11,4 +11,8 @@ export class PostAPIService {
             },
         });
     }
+
+    static async getPost(postId) {
+        return await axios.get(`${POSTS_API_URL}/${postId}`);
+    }
 }
