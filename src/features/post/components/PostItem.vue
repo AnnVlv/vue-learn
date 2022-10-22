@@ -4,14 +4,19 @@
     <div class="post__body">{{ post.content }}</div>
 
     <div class="post__actions">
-      <app-button @click="openPost">Open</app-button>
-      <app-button @click="deletePost">Delete</app-button>
+      <app-button
+          v-for="action of actions"
+          :key="action.name"
+          @click="onActionClick(action.name)"
+      >
+        {{ actionTitles[action.name] }}
+      </app-button>
     </div>
   </div>
 </template>
 
 <script>
-import {ROUTES} from '@/router';
+import {toUppercaseCaseFirstLetter} from '@/helpers';
 
 export default {
   props: {
@@ -19,13 +24,28 @@ export default {
       type: Object,
       required: true,
     },
+    actions: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      actionTitles: { },
+    };
+  },
+  mounted() {
+    this.setActionTitles();
   },
   methods: {
-    openPost() {
-      this.$router.push(`${ROUTES.POSTS}/${this.post.id}`);
+    setActionTitles() {
+      this.actionTitles = this.actions.reduce((titles, action) => {
+        titles[action.name] = toUppercaseCaseFirstLetter(action.name);
+        return titles;
+      }, { });
     },
-    deletePost() {
-      this.$emit('deletePost');
+    onActionClick(actionName) {
+      this.$emit(`${actionName}Post`);
     },
   },
 };

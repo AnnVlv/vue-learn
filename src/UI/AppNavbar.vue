@@ -2,7 +2,7 @@
   <div class="navbar">
     <router-link
         v-for="item of items"
-        :key="item"
+        :key="item.path"
         :to="item.path"
         exact
         @click="navigate(item.path)"
