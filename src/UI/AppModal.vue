@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="isVisible" @click="closeModal">
+  <div class="modal" v-if="isOpened" @click="closeModal">
     <div class="modal__content" @click.stop>
       <slot></slot>
     </div>
@@ -10,7 +10,7 @@
 export default {
   name: 'app-modal',
   props: {
-    isVisible: {
+    isOpened: {
       type: Boolean,
       default: false,
     },

@@ -3,26 +3,46 @@
     <h1 class="title">Posts</h1>
 
     <div class="filters">
-      <div>Filters</div>
+      <app-input
+          v-model="searchQuery"
+          placeholder="Search"
+      />
       <app-select
           :options="sortOptions"
           v-model:modelValue="sortType"
-      ></app-select>
+      />
+      <app-select
+          :options="limitOptions"
+          v-model:modelValue="limit"
+      />
     </div>
 
     <app-button
-        @click="setIsAddPostModalVisible(true)"
+        @click="setIsAddPostModalOpened(true)"
         class="add-post-button"
     >
       Add post
     </app-button>
-
-    <app-modal v-model:isVisible="isAddPostModalVisible">
-      <post-form :title="'Add post'" @addPost="addPostHandler"/>
+    <app-modal v-model:isOpened="isAddPostModalOpened">
+      <post-form
+          :actionName="'Add'"
+          @onSubmit="addPostHandler"
+      />
     </app-modal>
 
     <div v-if="isPostsLoading">Loading...</div>
-    <PostList v-else :posts="sortedPosts" @deletePost="deletePost"/>
+    <div v-else>
+      <post-list
+          :posts="sortedAndSearchedPosts"
+          @deletePost="deletePost"
+      />
+      <div class="pagination">
+        <app-pagination
+            :pageCount="pageCount"
+            v-model="page"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,9 +50,9 @@
 import axios from 'axios';
 import PostList from '@/features/post/PostList';
 import PostForm from '@/features/post/PostForm';
-import {delay} from '@/helpers';
+import {delay, getPageCount} from '@/helpers';
 
-const POSTS_API_URL = 'https://jsonplaceholder.typicode.com/posts?_limit=3';
+const POSTS_API_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 const SORT_TYPES = {
   NONE: '',
@@ -45,6 +65,13 @@ const SORT_OPTIONS = [
   {value: SORT_TYPES.BY_TITLE, label: 'By title',},
   {value: SORT_TYPES.BY_CONTENT, label: 'By content',},
 ];
+const LIMIT_OPTIONS = [
+  {value: 3, label: 3,},
+  {value: 5, label: 5,},
+  {value: 10, label: 10,},
+];
+const DEFAULT_LIMIT = LIMIT_OPTIONS[0]?.value;
+const DEFAULT_PAGE = 1;
 
 export default {
   components: {
@@ -55,26 +82,38 @@ export default {
     sortedPosts() {
       return this.sortPosts(this.posts, this.sortType);
     },
+    sortedAndSearchedPosts() {
+      return this.searchPosts(this.sortedPosts, this.search);
+    },
   },
   data() {
     return {
       posts: [],
       isPostsLoading: false,
-      isAddPostModalVisible: false,
+      isAddPostModalOpened: false,
       sortOptions: SORT_OPTIONS,
       sortType: DEFAULT_SORT_TYPE,
+      searchQuery: '',
+      page: DEFAULT_PAGE,
+      pageCount: 0,
+      limit: DEFAULT_LIMIT,
+      limitOptions: LIMIT_OPTIONS,
     };
   },
   mounted() {
     this.fetchPosts();
   },
   methods: {
-    setIsAddPostModalVisible(isAddPostModalVisible) {
-      this.isAddPostModalVisible = isAddPostModalVisible;
+    setIsAddPostModalOpened(isAddPostModalOpened) {
+      this.isAddPostModalOpened = isAddPostModalOpened;
     },
-    addPostHandler(post) {
+    addPostHandler(postForm) {
+      const post = {
+        ...postForm,
+        id: Date.now(),
+      };
       this.addPost(post);
-      this.setIsAddPostModalVisible(false);
+      this.setIsAddPostModalOpened(false);
     },
     addPost(post) {
       this.posts.push(post);
@@ -82,35 +121,64 @@ export default {
     deletePost(post) {
       this.posts = this.posts.filter(p => p !== post);
     },
-    async fetchPosts() {
+    async fetchPosts(params = this.getPostsParams()) {
       this.isPostsLoading = true;
       try {
         await delay();
-        const response = await axios.get(POSTS_API_URL);
+        const response = await axios.get(POSTS_API_URL, { params });
         this.posts = this.adaptAPIPosts(response.data);
+        const postCount = response.headers['x-total-count'];
+        this.pageCount = getPageCount(postCount, this.limit);
       } catch {
       } finally {
         this.isPostsLoading = false;
       }
     },
+    getPostsParams() {
+      return {
+        _limit: this.limit,
+        _page: this.page,
+      };
+    },
     adaptAPIPosts(APIPosts) {
       return APIPosts.map(post => {
         const {id, title, body} = post;
-        return {id, title, content: body,};
+        return {
+          id,
+          title,
+          content: body,
+        };
       });
     },
     sortPosts(posts, sortType) {
       if (sortType === SORT_TYPES.NONE) {
         return posts;
       }
-      return [...posts].sort((post1, post2) => post1[sortType].localeCompare(post2[sortType]));
+      return [...posts].sort((post1, post2) =>
+          post1[sortType].localeCompare(post2[sortType])
+      );
+    },
+    searchPosts(posts, searchQuery) {
+      if (!searchQuery) {
+        return posts;
+      }
+      return posts.filter(p =>
+          p.title.trim().toLowerCase().startsWith(searchQuery.trim().toLowerCase())
+      );
     },
   },
-  // watch: {
-  //   sortType() {
-  //     this.posts = this.sortPosts(this.posts, this.sortType);
-  //   },
-  // },
+  watch: {
+    limit() {
+      if (this.page === DEFAULT_PAGE) {
+        this.fetchPosts();
+      } else {
+        this.page = DEFAULT_PAGE;
+      }
+    },
+    page() {
+      this.fetchPosts();
+    },
+  },
 };
 </script>
 
@@ -136,5 +204,10 @@ export default {
 .add-post-button {
   margin: 15px 0 15px auto;
   display: block;
+}
+
+.pagination {
+  width: 70%;
+  margin: 15px auto;
 }
 </style>

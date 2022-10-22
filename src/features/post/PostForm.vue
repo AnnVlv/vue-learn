@@ -1,9 +1,9 @@
 <template>
-  <form class="post-form" @submit.prevent="addPost">
-    <h2 v-if="title" class="title">{{ title }}</h2>
+  <form class="post-form" @submit.prevent="onSubmit">
+    <h2 class="title">{{ actionName }} Post</h2>
     <app-input placeholder="Title" v-model="post.title" class="input"></app-input>
     <app-input placeholder="Content" v-model="post.content" class="input"></app-input>
-    <app-button>Add</app-button>
+    <app-button>{{ actionName }}</app-button>
   </form>
 </template>
 
@@ -17,7 +17,7 @@ const INITIAL_POST = {
 
 export default {
   props: {
-    title: {
+    actionName: {
       type: String,
     },
   },
@@ -30,16 +30,8 @@ export default {
     resetPostForm() {
       this.post = { ...INITIAL_POST };
     },
-    addPost() {
-      const { title, content } = this.post;
-
-      const newPost = {
-        id: Date.now(),
-        title,
-        content,
-      };
-      this.$emit('addPost', newPost);
-
+    onSubmit() {
+      this.$emit('onSubmit', this.post);
       this.resetPostForm();
     },
   },
