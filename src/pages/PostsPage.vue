@@ -45,12 +45,11 @@
 </template>
 
 <script>
-import axios from 'axios';
-import PostList from '@/features/post/PostList';
-import PostForm from '@/features/post/PostForm';
-import {delay, getPageCount} from '@/helpers';
-
-const POSTS_API_URL = 'https://jsonplaceholder.typicode.com/posts';
+import PostList from '@/features/post/components/PostList';
+import PostForm from '@/features/post/components/PostForm';
+import {PostAPIService} from '@/features/post/services/postAPIService';
+import {PostAdapterService} from '@/features/post/services/postAdapterService';
+import {getPageCount} from '@/helpers';
 
 const SORT_TYPES = {
   NONE: '',
@@ -102,6 +101,22 @@ export default {
     this.fetchPosts();
   },
   methods: {
+    async fetchPosts(params = this.getPostsParams()) {
+      this.isPostsLoading = true;
+      try {
+        const response = await PostAPIService.getPosts(params);
+        this.posts = PostAdapterService.adaptAPIPosts(response.data);
+        const postCount = response.headers['x-total-count'];
+        this.pageCount = getPageCount(postCount, this.limit);
+      } catch {
+      } finally {
+        this.isPostsLoading = false;
+      }
+    },
+    getPostsParams() {
+      const { limit, page } = this;
+      return { limit, page };
+    },
     setIsAddPostModalOpened(isAddPostModalOpened) {
       this.isAddPostModalOpened = isAddPostModalOpened;
     },
@@ -118,35 +133,6 @@ export default {
     },
     deletePost(post) {
       this.posts = this.posts.filter(p => p !== post);
-    },
-    async fetchPosts(params = this.getPostsParams()) {
-      this.isPostsLoading = true;
-      try {
-        await delay(500);
-        const response = await axios.get(POSTS_API_URL, {params});
-        this.posts = this.adaptAPIPosts(response.data);
-        const postCount = response.headers['x-total-count'];
-        this.pageCount = getPageCount(postCount, this.limit);
-      } catch {
-      } finally {
-        this.isPostsLoading = false;
-      }
-    },
-    getPostsParams() {
-      return {
-        _limit: this.limit,
-        _page: this.page,
-      };
-    },
-    adaptAPIPosts(APIPosts) {
-      return APIPosts.map(post => {
-        const {id, title, body} = post;
-        return {
-          id,
-          title,
-          content: body,
-        };
-      });
     },
     sortPosts(posts, sortType) {
       if (sortType === SORT_TYPES.NONE) {

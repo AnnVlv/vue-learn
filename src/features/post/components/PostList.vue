@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import PostItem from '@/features/post/PostItem';
+import PostItem from '@/features/post/components/PostItem';
 
 export default {
   components: {
