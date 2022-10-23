@@ -1,7 +1,7 @@
 <template>
   <form class="post-form" @submit.prevent="onSubmit">
     <h2 class="title">{{ actionName }} Post</h2>
-    <app-input placeholder="Title" v-model="post.title" class="input"></app-input>
+    <app-input v-focus placeholder="Title" v-model="post.title" class="input"></app-input>
     <app-input placeholder="Content" v-model="post.content" class="input"></app-input>
     <app-button>{{ actionName }}</app-button>
   </form>

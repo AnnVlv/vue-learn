@@ -1,11 +1,14 @@
 <template>
   <h1 class="title">Post</h1>
 
-  <post-item
-      v-if="post"
-      :post="post"
-  />
-  <div v-else>Loading...</div>
+  <div v-if="isPostLoading">Loading...</div>
+  <div v-else>
+    <post-item
+        v-if="post"
+        :post="post"
+    />
+    <div v-else>No post.</div>
+  </div>
 </template>
 
 <script>
