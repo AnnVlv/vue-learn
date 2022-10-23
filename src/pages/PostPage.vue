@@ -20,12 +20,10 @@ export default {
   components: {
     PostItem,
   },
-  data() {
-    return {
-      post: null,
-      isPostLoading: false,
-    };
-  },
+  data: () => ({
+    post: null,
+    isPostLoading: false,
+  }),
   mounted() {
     const postId = this.getPostIdParam();
     this.fetchPost(postId);

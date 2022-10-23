@@ -83,20 +83,18 @@ export default {
       return this.searchPosts(this.sortedPosts, this.search);
     },
   },
-  data() {
-    return {
-      posts: [],
-      isPostsLoading: false,
-      isAddPostModalOpened: false,
-      sortOptions: SORT_OPTIONS,
-      sortType: DEFAULT_SORT_TYPE,
-      searchQuery: '',
-      page: DEFAULT_PAGE,
-      pageCount: 0,
-      limit: DEFAULT_LIMIT,
-      limitOptions: LIMIT_OPTIONS,
-    };
-  },
+  data: () => ({
+    posts: [],
+    isPostsLoading: false,
+    isAddPostModalOpened: false,
+    sortOptions: SORT_OPTIONS,
+    sortType: DEFAULT_SORT_TYPE,
+    searchQuery: '',
+    page: DEFAULT_PAGE,
+    pageCount: 0,
+    limit: DEFAULT_LIMIT,
+    limitOptions: LIMIT_OPTIONS,
+  }),
   mounted() {
     this.fetchPosts();
   },

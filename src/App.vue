@@ -9,14 +9,12 @@
 import {ROUTES} from '@/router';
 
 export default {
-  data() {
-    return {
-      navItems: [
-        { title: 'Home', path: ROUTES.HOME, },
-        { title: 'Posts', path: ROUTES.POSTS, },
-      ],
-    };
-  },
+  data: () => ({
+    navItems: [
+      { title: 'Home', path: ROUTES.HOME, },
+      { title: 'Posts', path: ROUTES.POSTS, },
+    ],
+  }),
 };
 </script>
 

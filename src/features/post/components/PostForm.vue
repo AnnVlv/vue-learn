@@ -21,11 +21,9 @@ export default {
       type: String,
     },
   },
-  data() {
-    return {
-      post: { ...INITIAL_POST },
-    };
-  },
+  data: () => ({
+    post: { ...INITIAL_POST },
+  }),
   methods: {
     resetPostForm() {
       this.post = { ...INITIAL_POST };

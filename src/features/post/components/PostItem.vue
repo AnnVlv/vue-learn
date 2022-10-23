@@ -29,11 +29,9 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      actionTitles: { },
-    };
-  },
+  data: () => ({
+    actionTitles: {},
+  }),
   mounted() {
     this.setActionTitles();
   },

@@ -30,11 +30,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      POST_ITEM_ACTIONS: POST_ITEM_ACTIONS,
-    };
-  },
+  data: () => ({
+    POST_ITEM_ACTIONS: POST_ITEM_ACTIONS,
+  }),
   methods: {
     openPost(postId) {
       this.$router.push(`${ROUTES.POSTS}/${postId}`);
