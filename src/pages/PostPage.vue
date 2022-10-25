@@ -12,33 +12,31 @@
 </template>
 
 <script>
-import {PostAPIService} from '@/features/post/services/postAPIService';
-import {PostAdapterService} from '@/features/post/services/postAdapterService';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import PostItem from '@/features/post/components/PostItem';
 
 export default {
   components: {
     PostItem,
   },
-  data: () => ({
-    post: null,
-    isPostLoading: false,
-  }),
+  computed: {
+    // ...mapState({
+    //   post: state => state.postModule.post,
+    //   isPostLoading: state => state.postModule.isPostLoading,
+    // }),
+    ...mapGetters({
+      post: 'postModule/post',
+      isPostLoading: 'postModule/isPostLoading',
+    }),
+  },
   mounted() {
     const postId = this.getPostIdParam();
     this.fetchPost(postId);
   },
   methods: {
-    async fetchPost(postId) {
-      this.isPostLoading = true;
-      try {
-        const response = await PostAPIService.getPost(postId);
-        this.post = PostAdapterService.adaptAPIPost(response.data);
-      } catch {
-      } finally {
-        this.isPostLoading = false;
-      }
-    },
+    ...mapActions({
+      fetchPost: 'postModule/fetchPost',
+    }),
     getPostIdParam() {
       return this.$route.params['id'];
     },
