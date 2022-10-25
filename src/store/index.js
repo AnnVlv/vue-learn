@@ -1,10 +1,12 @@
 import {createStore} from 'vuex';
 import {toUppercaseCaseFirstLetter} from '@/helpers';
 import {postModule} from '@/store/postModule';
+import {postsModule} from '@/store/postsModule';
 
 
 export default createStore({
     modules: {
+        postsModule,
         postModule,
     },
     state: () => ({

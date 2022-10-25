@@ -8,7 +8,8 @@
         :class="{
           current: page === modelValue,
         }"
-    >{{ page }}
+    >
+      {{ page }}
     </div>
   </div>
 </template>

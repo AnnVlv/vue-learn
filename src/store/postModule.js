@@ -1,5 +1,6 @@
-import {PostAPIService} from "@/features/post/services/postAPIService";
-import {PostAdapterService} from "@/features/post/services/postAdapterService";
+import {PostAPIService} from '@/features/post/services/postAPIService';
+import {PostAdapterService} from '@/features/post/services/postAdapterService';
+
 
 export const postModule = {
     state: () => ({

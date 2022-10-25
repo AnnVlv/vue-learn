@@ -12,7 +12,8 @@ export default {
   data: () => ({
     navItems: [
       { title: 'Home', path: ROUTES.HOME, },
-      { title: 'Posts', path: ROUTES.POSTS, },
+      { title: 'Posts (Vuex state)', path: ROUTES.POSTS, },
+      { title: 'Posts (local component state)', path: ROUTES.POSTS_LOCAL_STATE, },
     ],
   }),
 };
