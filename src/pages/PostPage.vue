@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapState} from 'vuex';
+import {mapActions, mapState} from 'vuex';
 import PostItem from '@/features/post/components/PostItem';
 
 export default {
@@ -20,13 +20,9 @@ export default {
     PostItem,
   },
   computed: {
-    // ...mapState({
-    //   post: state => state.postModule.post,
-    //   isPostLoading: state => state.postModule.isPostLoading,
-    // }),
-    ...mapGetters({
-      post: 'postModule/post',
-      isPostLoading: 'postModule/isPostLoading',
+    ...mapState({
+      post: state => state.postModule.post,
+      isPostLoading: state => state.postModule.isPostLoading,
     }),
   },
   mounted() {

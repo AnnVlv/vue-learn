@@ -25,6 +25,7 @@
   >
     Add post
   </app-button>
+
   <app-modal v-model:isOpened="isAddPostModalOpened">
     <post-form
         :actionName="'Add'"
@@ -38,19 +39,18 @@
         :posts="sortedAndSearchedPosts"
         @deletePost="deletePost"
     />
-    <div class="pagination">
-      <app-pagination
-          :pageCount="pageCount"
-          :modelValue="page"
-          @update:modelValue="setPage"
-      />
-    </div>
+    <app-pagination
+        class="pagination"
+        :pageCount="pageCount"
+        :modelValue="page"
+        @update:modelValue="setPage"
+    />
   </div>
 </template>
 
 <script>
 import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
-import {DEFAULT_PAGE} from '@/store/postsModule';
+import {DEFAULT_PAGE} from '@/store/postModule';
 import PostList from '@/features/post/components/PostList';
 import PostForm from '@/features/post/components/PostForm';
 import {LIMIT_OPTIONS, SORT_OPTIONS} from '@/features/post/const';
@@ -63,15 +63,15 @@ export default {
   },
   computed: {
     ...mapState({
-      isPostsLoading: state => state.postsModule.isPostsLoading,
-      sortType: state => state.postsModule.sortType,
-      searchQuery: state => state.postsModule.searchQuery,
-      page: state => state.postsModule.page,
-      pageCount: state => state.postsModule.pageCount,
-      limit: state => state.postsModule.limit,
+      isPostsLoading: state => state.postModule.isPostsLoading,
+      sortType: state => state.postModule.sortType,
+      searchQuery: state => state.postModule.searchQuery,
+      page: state => state.postModule.page,
+      pageCount: state => state.postModule.pageCount,
+      limit: state => state.postModule.limit,
     }),
     ...mapGetters({
-      sortedAndSearchedPosts: 'postsModule/sortedAndSearchedPosts',
+      sortedAndSearchedPosts: 'postModule/sortedAndSearchedPosts',
     }),
   },
   data: () => ({
@@ -84,16 +84,16 @@ export default {
   },
   methods: {
     ...mapMutations({
-      addPost: 'postsModule/addPost',
-      deletePost: 'postsModule/deletePost',
-      setSortType: 'postsModule/setSortType',
-      setSearchQuery: 'postsModule/setSearchQuery',
-      setPage: 'postsModule/setPage',
-      setPageCount: 'postsModule/setPageCount',
-      setLimit: 'postsModule/setLimit',
+      addPost: 'postModule/addPost',
+      deletePost: 'postModule/deletePost',
+      setSortType: 'postModule/setSortType',
+      setSearchQuery: 'postModule/setSearchQuery',
+      setPage: 'postModule/setPage',
+      setPageCount: 'postModule/setPageCount',
+      setLimit: 'postModule/setLimit',
     }),
     ...mapActions({
-      fetchPosts: 'postsModule/fetchPosts',
+      fetchPosts: 'postModule/fetchPosts',
     }),
     setIsAddPostModalOpened(isAddPostModalOpened) {
       this.isAddPostModalOpened = isAddPostModalOpened;
